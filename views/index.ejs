@@ -1,0 +1,103 @@
+<html>
+  <head>
+    <title>Expense Tracker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-4">
+          <form action="/tracker" method="POST">
+            <div class="form-group">
+              <label for="txtNote">Note</label>
+              <input type="text" class="form-control" id="txtNote" name="note" placeholder="Enter input/expense note">
+            </div>
+            <label>Type</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="type" id="rboInput" value="input">
+              <label class="form-check-label" for="rboInput">Input</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="type" id="rboExpense" value="expense">
+              <label class="form-check-label" for="rboExpense">Expense</label>
+            </div>
+            <div class="form-group">
+              <label for="ddlCategory">Category</label>
+              <select class="form-control" id="ddlCategory" name="category">
+                <option value="jajan">Jajan</option>
+                <option value="makan">Makan</option>
+                <option value="bulanan">Belanja bulanan</option>
+                <option value="ngupi">Ngupi</option>
+                <option value="lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="txtTotal">Total</label>
+              <input type="number" class="form-control" id="txtTotal" name="total" placeholder="Enter total input/expense">
+            </div>
+            <button type="submit" class="btn btn-primary btnSave">Submit</button>
+          </form>
+        </div>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <input type="text" class="form-control" id="txtSearch" name="search" placeholder="Search by note only..." value="<%if(search){%><%= search %><%}%>">
+            <span class="input-group-btn">
+              <button class="btn btn-success btnSearch" onclick="fnSearch()" type="button">Search</button>
+            </span>
+          </div>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Type</th>
+                <th scope="col">Category</th>
+                <th scope="col">Note</th>
+                <th scope="col">Total</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% trackers.forEach(function(tracker) { %>
+                <tr>
+                  <td><%= tracker.id %></td>
+                  <td><%= tracker.type %></td>
+                  <td><%= tracker.category %></td>
+                  <td><%= tracker.note %></td>
+                  <td><%= tracker.total %></td>
+                  <td>
+                    <button type="button" class="btn btn-info" onclick="fnEdit('<%= tracker.id %>')">Edit</button>
+                    <button class="btn btn-success btnDelete" id="btnDelete" onclick="fnDelete('<%= tracker.id %>')" type="button">Delete</button></td>
+                </tr>
+              <% }); %>
+            </tbody>  
+          </table>
+        </div>
+      </div>
+    </div>
+    <script>
+      function fnEdit(id) {
+        window.location.replace(`/tracker/${id}`);
+      }
+
+      function fnSearch() {
+        const txtSearch = $('#txtSearch').val();
+        window.location.replace(`/${txtSearch}`);
+      }
+
+      function fnDelete(id){
+        $.ajax({
+          url: `/tracker/${id}`,
+          type: 'DELETE',
+          success: function(result) {
+            alert(`Delete ${result.note} successfull`);
+            window.location.replace('/');
+          }
+        })
+      }
+    </script>
+  </body>
+</html>

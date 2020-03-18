@@ -6,7 +6,7 @@ const trackerRoutes = require('./routers/tracker.router');
 const app = express();
 const url = process.env.MONGODB_URL || 'mongodb://localhost:27017';
 const port = process.env.PORT || 3000;
-const dbName = 'final-project';
+const dbName = 'test';
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
